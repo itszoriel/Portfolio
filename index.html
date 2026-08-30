@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f4f1ea" />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>Paul John Antigo | Portfolio</title>
+    <meta
+      name="description"
+      content="Portfolio of Paul John Antigo, a Computer Science student and aspiring software engineer building full-stack applications with React, TypeScript, Python, Flask, SQL, and PostgreSQL."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Paul John Antigo" />
+    <meta property="og:title" content="Paul John Antigo | Portfolio" />
+    <meta
+      property="og:description"
+      content="Computer Science student and aspiring software engineer building practical full-stack software."
+    />
+    <meta property="og:locale" content="en_PH" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <script>
+      ;(() => {
+        const saved = localStorage.getItem('theme')
+        const dark = saved === 'dark' || (!saved && matchMedia('(prefers-color-scheme: dark)').matches)
+        document.documentElement.classList.toggle('dark', dark)
+      })()
+    </script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
