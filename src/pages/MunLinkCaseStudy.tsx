@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { Architecture } from '../components/Architecture'
 import { Footer } from '../components/Footer'
 import { MunLinkPreview } from '../components/MunLinkPreview'
+import { PageMetadata } from '../components/PageMetadata'
 import { Reveal } from '../components/Reveal'
 import { projectUrl } from '../content'
 
@@ -40,6 +41,16 @@ const features = [
 export function MunLinkCaseStudy() {
   return (
     <>
+      <PageMetadata
+        title="MunLink Case Study | Paul John Antigo"
+        description="Explore how Paul John Antigo designed and built MunLink, a full-stack civic-tech platform using React, TypeScript, Python, Flask, and PostgreSQL."
+        path="/work/munlink"
+        image="/images/munlink-homepage.jpg"
+        imageAlt="MunLink public homepage"
+        imageWidth={1881}
+        imageHeight={946}
+        type="article"
+      />
       <main id="main-content" className="case-study">
         <section className="case-hero" id="top">
           <Link className="back-link" to="/#projects"><ArrowLeft size={16} /> Back to selected work</Link>

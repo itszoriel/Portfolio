@@ -2,6 +2,7 @@ import { ArrowDownRight, ArrowRight, ArrowUpRight, Check, MapPin } from 'lucide-
 import { Link } from 'react-router-dom'
 import { credentials, emailAddress, exploring, projectUrl, skillGroups, socialLinks } from '../content'
 import { Footer } from '../components/Footer'
+import { PageMetadata } from '../components/PageMetadata'
 import { Reveal } from '../components/Reveal'
 import { ResumePicker } from '../components/ResumePicker'
 import { SectionHeading } from '../components/SectionHeading'
@@ -23,17 +24,22 @@ const projectStack = ['React', 'TypeScript', 'Vite', 'Tailwind CSS', 'Zustand', 
 export function HomePage() {
   return (
     <>
+      <PageMetadata
+        title="Paul John Antigo | Computer Science Student & Developer"
+        description="Portfolio of Paul John Antigo, a Computer Science student and software developer in the Philippines. Explore his full-stack projects, technical skills, and experience."
+        path="/"
+      />
       <main id="main-content">
         <section className="hero" id="top">
           <div className="hero-copy">
             <Reveal className="hero-kicker">
-              <span className="hero-name">Paul John Antigo</span><i /><span className="hero-location">Taltal, Masinloc, Zambales, PH</span>
+              <h1 className="hero-name">Paul John Antigo</h1><i /><span className="hero-location">Taltal, Masinloc, Zambales, PH</span>
             </Reveal>
             <Reveal className="hero-title-wrap">
-              <h1>
+              <p className="hero-statement">
                 Learning, building,<br />
                 <span>&amp; figuring things out.</span>
-              </h1>
+              </p>
             </Reveal>
             <Reveal className="hero-intro">
               <p className="hero-role">Computer Science Student<br /> Technology & Software</p>
@@ -58,7 +64,7 @@ export function HomePage() {
 
           <Reveal className="portrait-column">
             <figure className="portrait">
-              <img src="/images/paul-john-antigo.jpg" alt="Paul John Antigo" width="960" height="960" decoding="async" fetchPriority="high" />
+              <img src="/images/paul-john-antigo.jpg" alt="Portrait of Paul John Antigo, Computer Science student and software developer" width="960" height="960" decoding="async" fetchPriority="high" />
               <figcaption><span>Current Profile</span><span> / 2026</span></figcaption>
             </figure>
             <div className="location-note"><MapPin size={14} /><span>Based in Philippines</span></div>
