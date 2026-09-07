@@ -23,7 +23,7 @@ export function SocialLink({ label, href, compact = false }: SocialLinkProps) {
       className={`social-link ${compact ? 'compact' : ''}`}
       href={href}
       target={opensNewTab ? '_blank' : undefined}
-      rel={opensNewTab ? 'noreferrer' : undefined}
+      rel={opensNewTab ? 'me noreferrer' : undefined}
     >
       {label}<ArrowUpRight size={15} aria-hidden="true" />
     </a>

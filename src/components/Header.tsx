@@ -1,7 +1,7 @@
 import { useEffect, useState, type MouseEvent } from 'react'
 import { ArrowUpRight, Menu, Moon, Sun, X } from 'lucide-react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { emailAddress, navigation, socialLinks } from '../content'
+import { emailAddress, navigation, personName, socialLinks } from '../content'
 import { PALogo } from './PALogo'
 import { ResumePicker } from './ResumePicker'
 
@@ -30,7 +30,8 @@ export function Header({ isDark, toggleTheme, openCommandMenu }: HeaderProps) {
 
     const updateActiveSection = () => {
       animationFrame = 0
-      const marker = window.scrollY + 72 + window.innerHeight * 0.45
+      const headerHeight = document.querySelector('header.site-header')?.getBoundingClientRect().height ?? 72
+      const marker = window.scrollY + headerHeight + 24
       const sections = navigation
         .map((item) => {
           const id = item.href.split('#')[1]
@@ -88,7 +89,7 @@ export function Header({ isDark, toggleTheme, openCommandMenu }: HeaderProps) {
   return (
     <header className="site-header">
       <div className="header-inner">
-        <Link className="brand" to="/#top" onClick={handleBrandClick} aria-label="Paul Antigo — back to top">
+        <Link className="brand" to="/#top" onClick={handleBrandClick} aria-label={`${personName} - back to top`}>
           <PALogo className="pa-logo" />
         </Link>
 
@@ -140,13 +141,13 @@ export function Header({ isDark, toggleTheme, openCommandMenu }: HeaderProps) {
         <div className="mobile-nav-socials" aria-label="Social links">
           <span>Socials</span>
           <div>
-            <a href={socialLinks.linkedin} target="_blank" rel="noreferrer" onClick={() => setMenuOpen(false)}>
+            <a href={socialLinks.linkedin} target="_blank" rel="me noreferrer" onClick={() => setMenuOpen(false)}>
               <span>IN</span>LinkedIn<ArrowUpRight size={14} aria-hidden="true" />
             </a>
-            <a href={socialLinks.github} target="_blank" rel="noreferrer" onClick={() => setMenuOpen(false)}>
+            <a href={socialLinks.github} target="_blank" rel="me noreferrer" onClick={() => setMenuOpen(false)}>
               <span>GH</span>GitHub<ArrowUpRight size={14} aria-hidden="true" />
             </a>
-            <a href={socialLinks.instagram} target="_blank" rel="noreferrer" onClick={() => setMenuOpen(false)}>
+            <a href={socialLinks.instagram} target="_blank" rel="me noreferrer" onClick={() => setMenuOpen(false)}>
               <span>IG</span>Instagram<ArrowUpRight size={14} aria-hidden="true" />
             </a>
             <a href={socialLinks.email} onClick={() => setMenuOpen(false)}>

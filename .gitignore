@@ -6,7 +6,11 @@ npm-debug.log*
 tmp/
 output/
 
-scripts/
+.playwright*/
+__pycache__/
+*.py[cod]
+resume/cv-interview-questionnaire.md
+resume/*.docx
 .env
 .env.*
 !.env.example

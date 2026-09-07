@@ -1,6 +1,12 @@
+export const siteUrl = 'https://paul-antigo.vercel.app/'
+export const personName = 'Paul John E. Antigo'
+export const homeTitle = `${personName} | Computer Science Student & Portfolio`
+export const homeDescription = `Portfolio of ${personName}, a Computer Science student exploring software development, cybersecurity, data, cloud, and AI.`
+
 export const projectUrl = 'https://munlink-web-9s3r.onrender.com/'
 export const resumeUrl = '/Paul-John-Antigo-Resume.pdf'
 export const phResumeUrl = '/resumes/Paul-John-Antigo-PH-Resume.pdf'
+export const cvUrl = '/resumes/Paul-John-Antigo-CV.pdf'
 export const emailAddress = 'Pauljohn.antigo@gmail.com'
 
 export const socialLinks = {
@@ -26,6 +32,10 @@ export const skillGroups = [
   {
     title: 'Development / Engineering',
     items: ['Git', 'GitHub', 'Turborepo', 'Authentication', 'Authorization', 'JWT', 'Role-Based Access Control', 'API Integration'],
+  },
+  {
+    title: 'Development workflows',
+    items: ['Detailed prompting', 'Task decomposition', 'Context management', 'Output validation', 'Token-conscious workflows'],
   },
 ]
 

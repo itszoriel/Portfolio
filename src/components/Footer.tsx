@@ -1,4 +1,4 @@
-import { emailAddress, socialLinks } from '../content'
+import { emailAddress, personName, socialLinks } from '../content'
 import { SocialLink } from './SocialLink'
 
 export function Footer() {
@@ -6,7 +6,7 @@ export function Footer() {
     <footer className="site-footer">
       <div className="footer-main">
         <div>
-          <strong>Paul John Antigo</strong>
+          <strong>{personName}</strong>
           <span>Curious about technology, open to different paths, &amp; always looking for ways to learn, improve, &amp; contribute.</span>
         </div>
         <div className="footer-links">
@@ -17,7 +17,7 @@ export function Footer() {
           <a href="#top">Back to top ↑</a>
         </div>
       </div>
-      <div className="footer-meta"><span>© {new Date().getFullYear()}</span><span>Taltal, MAsinloc, Zambales, Philippines · PHT (UTC+8)</span></div>
+      <div className="footer-meta"><span>© {new Date().getFullYear()}</span><span>Taltal, Masinloc, Zambales, Philippines · PHT (UTC+8)</span></div>
     </footer>
   )
 }

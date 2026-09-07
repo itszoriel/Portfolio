@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect, useState } from 'react'
-import { Route, Routes, useLocation } from 'react-router-dom'
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import { CommandMenu } from './components/CommandMenu'
 import { Header } from './components/Header'
 import { useTheme } from './hooks'
@@ -39,6 +39,7 @@ function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/work/munlink" element={<Suspense fallback={<main className="route-loading" aria-label="Loading case study" />}><MunLinkCaseStudy /></Suspense>} />
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
       <CommandMenu open={commandOpen} onClose={() => setCommandOpen(false)} />
     </div>

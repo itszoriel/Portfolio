@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState, type FormEvent, type KeyboardEvent } from 'react'
 import { ArrowRight, ChevronDown, Download, ExternalLink, Search, X } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
-import { emailAddress, phResumeUrl, resumeUrl, socialLinks } from '../content'
+import { cvUrl, emailAddress, phResumeUrl, resumeUrl, socialLinks } from '../content'
 
 type CommandMenuProps = {
   open: boolean
@@ -17,7 +17,7 @@ type SearchCommand = {
 
 const navigationCommands: SearchCommand[] = [
   { label: 'View Projects', keywords: 'work portfolio', href: '/#projects', kind: 'internal' },
-  { label: 'MunLink', keywords: 'project case study civic tech', href: '/work/munlink', kind: 'internal' },
+  { label: 'MunLink', keywords: 'project case study civic technology react flask postgresql', href: '/work/munlink', kind: 'internal' },
   { label: 'Experience', keywords: 'work spes cisco', href: '/#experience', kind: 'internal' },
   { label: 'Skills', keywords: 'technical technologies stack', href: '/#skills', kind: 'internal' },
   { label: 'Credentials', keywords: 'certificates learning courses', href: '/#credentials', kind: 'internal' },
@@ -26,8 +26,9 @@ const navigationCommands: SearchCommand[] = [
 ]
 
 const resumeCommands: SearchCommand[] = [
-  { label: 'ATS Resume', keywords: 'download cv', href: resumeUrl, kind: 'download' },
-  { label: 'Photo Resume', keywords: 'download cv portrait philippines', href: phResumeUrl, kind: 'download' },
+  { label: 'ATS Resume', keywords: 'download job application', href: resumeUrl, kind: 'download' },
+  { label: 'Photo Resume', keywords: 'download portrait philippines', href: phResumeUrl, kind: 'download' },
+  { label: 'Curriculum Vitae', keywords: 'download cv research academic', href: cvUrl, kind: 'download' },
 ]
 
 const socialCommands: SearchCommand[] = [
@@ -155,7 +156,7 @@ export function CommandMenu({ open, onClose }: CommandMenuProps) {
         href={command.href}
         {...dataProps}
         {...(command.kind === 'download' ? { download: true } : {})}
-        {...(command.href.startsWith('http') ? { target: '_blank', rel: 'noreferrer' } : {})}
+        {...(command.href.startsWith('http') ? { target: '_blank', rel: 'me noreferrer' } : {})}
         onClick={onClose}
       >
         <span>{command.label}</span>{icon}
@@ -227,8 +228,8 @@ export function CommandMenu({ open, onClose }: CommandMenuProps) {
                 {navigationCommands.slice(2).map((command) => renderCommand(command))}
               </section>
 
-              <section className="command-group" aria-label="Resume">
-                <div className="command-group-title"><span>Resume</span></div>
+              <section className="command-group" aria-label="Application documents">
+                <div className="command-group-title"><span>Documents</span></div>
                 {resumeCommands.map((command) => renderCommand(command))}
               </section>
 
