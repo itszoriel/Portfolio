@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState, type FormEvent, type KeyboardEvent } from 'react'
 import { ArrowRight, ChevronDown, Download, ExternalLink, Search, X } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
-import { cvUrl, emailAddress, phResumeUrl, resumeUrl, socialLinks } from '../content'
+import { cvUrl, emailAddress, phResumeUrl, phoneNumber, resumeUrl, socialLinks } from '../content'
 
 type CommandMenuProps = {
   open: boolean
@@ -16,22 +16,23 @@ type SearchCommand = {
 }
 
 const navigationCommands: SearchCommand[] = [
-  { label: 'View Projects', keywords: 'work portfolio', href: '/#projects', kind: 'internal' },
-  { label: 'MunLink', keywords: 'project case study civic technology react flask postgresql', href: '/work/munlink', kind: 'internal' },
+  { label: 'Credentials', keywords: 'earned certificates learning courses', href: '/#credentials', kind: 'internal' },
   { label: 'Experience', keywords: 'work spes cisco', href: '/#experience', kind: 'internal' },
   { label: 'Skills', keywords: 'technical technologies stack', href: '/#skills', kind: 'internal' },
-  { label: 'Credentials', keywords: 'certificates learning courses', href: '/#credentials', kind: 'internal' },
+  { label: 'View Projects', keywords: 'work portfolio', href: '/#projects', kind: 'internal' },
+  { label: 'MunLink', keywords: 'project case study civic technology react flask postgresql', href: '/work/munlink', kind: 'internal' },
   { label: 'About Me', keywords: 'profile biography', href: '/#about', kind: 'internal' },
   { label: 'Contact Me', keywords: 'connect opportunities', href: '/#contact', kind: 'internal' },
 ]
 
 const resumeCommands: SearchCommand[] = [
-  { label: 'ATS Resume', keywords: 'download job application', href: resumeUrl, kind: 'download' },
-  { label: 'Photo Resume', keywords: 'download portrait philippines', href: phResumeUrl, kind: 'download' },
+  { label: 'Standard Resume (ATS)', keywords: 'download job application', href: resumeUrl, kind: 'download' },
+  { label: 'Philippine Resume', keywords: 'download portrait photo philippines', href: phResumeUrl, kind: 'download' },
   { label: 'Curriculum Vitae', keywords: 'download cv research academic', href: cvUrl, kind: 'download' },
 ]
 
 const socialCommands: SearchCommand[] = [
+  { label: phoneNumber, keywords: 'phone call mobile contact', href: socialLinks.phone, kind: 'external' },
   ...(socialLinks.linkedin ? [{ label: 'LinkedIn', keywords: 'social professional', href: socialLinks.linkedin, kind: 'external' as const }] : []),
   ...(socialLinks.github ? [{ label: 'GitHub', keywords: 'social code repositories', href: socialLinks.github, kind: 'external' as const }] : []),
   ...(socialLinks.instagram ? [{ label: 'Instagram', keywords: 'social', href: socialLinks.instagram, kind: 'external' as const }] : []),
@@ -112,6 +113,11 @@ export function CommandMenu({ open, onClose }: CommandMenuProps) {
   }
 
   const handleKeyDown = (event: KeyboardEvent<HTMLDialogElement>) => {
+    if (event.key === 'Escape') {
+      event.preventDefault()
+      onClose()
+      return
+    }
     if (!['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(event.key)) return
 
     const items = Array.from(dialogRef.current?.querySelectorAll<HTMLElement>('[data-command-item]') ?? [])
@@ -168,6 +174,7 @@ export function CommandMenu({ open, onClose }: CommandMenuProps) {
     <dialog
       ref={dialogRef}
       className="command-menu"
+      aria-label="Quick navigation"
       onClose={onClose}
       onKeyDown={handleKeyDown}
       onClick={(event) => event.target === event.currentTarget && onClose()}
@@ -203,6 +210,7 @@ export function CommandMenu({ open, onClose }: CommandMenuProps) {
             <>
               <section className="command-group" aria-label="Navigate">
                 <div className="command-group-title"><span>Navigate</span></div>
+                {navigationCommands.slice(0, 3).map((command) => renderCommand(command))}
                 <div
                   className={`command-projects${projectsVisible ? ' is-open' : ''}`}
                   onMouseEnter={() => setProjectsHovered(true)}
@@ -225,7 +233,7 @@ export function CommandMenu({ open, onClose }: CommandMenuProps) {
                     </button>
                   </div>
                 </div>
-                {navigationCommands.slice(2).map((command) => renderCommand(command))}
+                {navigationCommands.slice(5).map((command) => renderCommand(command))}
               </section>
 
               <section className="command-group" aria-label="Application documents">

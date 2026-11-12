@@ -56,12 +56,12 @@ export function ResumePicker({ variant = 'hero' }: ResumePickerProps) {
           <div className="resume-options">
             <a href={resumeUrl} download onClick={close}>
               <FileText size={21} aria-hidden="true" />
-              <span><strong>ATS resume</strong><small>Single-column and optimized for online applications.</small></span>
+              <span><strong>Standard resume (ATS)</strong><small>Single-column layout for online applications.</small></span>
               <Download size={16} aria-hidden="true" />
             </a>
             <a href={phResumeUrl} download onClick={close}>
               <UserRound size={21} aria-hidden="true" />
-              <span><strong>Photo resume</strong><small>Philippine-style layout with a formal portrait.</small></span>
+              <span><strong>Philippine resume</strong><small>Photo layout with a formal portrait.</small></span>
               <Download size={16} aria-hidden="true" />
             </a>
             <a href={cvUrl} download onClick={close}>

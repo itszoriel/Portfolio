@@ -1,4 +1,4 @@
-"""Generate Paul John E. Antigo's comprehensive CV as a DOCX.
+"""Generate Paul John E. Antigo's designed CV as a PDF and editable DOCX.
 
 Run from the repository root with:
     python resume/generate_cv.py
@@ -19,26 +19,27 @@ from reportlab.lib.enums import TA_LEFT
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
 from reportlab.lib.units import inch
-from reportlab.platypus import Paragraph, SimpleDocTemplate
+from reportlab.platypus import Paragraph, SimpleDocTemplate, PageBreak, Spacer
 from xml.sax.saxutils import escape
+from document_common import PROFILE as P, assert_black_pdf, blacken_docx, certificate_title, certificate_url, link, plain
 
 
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUT_DIR = ROOT / "resume"
-OUTPUT_PATH = OUTPUT_DIR / "Paul-John-Antigo-CV.docx"
+OUTPUT_PATH = OUTPUT_DIR / "Paul-John-Antigo-CV-Editable.docx"
 PDF_OUTPUT_DIR = ROOT / "public" / "resumes"
 PDF_OUTPUT_PATH = PDF_OUTPUT_DIR / "Paul-John-Antigo-CV.pdf"
 
 FONT = "Calibri"
-INK = RGBColor(23, 33, 38)
-MUTED = RGBColor(82, 97, 106)
-ACCENT = RGBColor(29, 92, 99)
-LINK = "164E63"
+INK = RGBColor(0, 0, 0)
+MUTED = RGBColor(0, 0, 0)
+ACCENT = RGBColor(0, 0, 0)
+LINK = "000000"
 
 
 PROFILE = (
     "Fourth-year Computer Science student with practical full-stack project experience. "
-    "Worked across MunLink's frontend, API, database, and deployment, implementing features, "
+    "Used AI assistance, documentation, and developer communities while working across MunLink's frontend, API, database, and deployment, implementing features, "
     "integrating application layers, and testing workflows. Contributed to undergraduate blockchain research using Solidity, "
     "TypeScript, automated testing, gas measurement, and Ethereum Sepolia. Seeking "
     "internship, OJT, and entry-level opportunities to contribute and continue learning."
@@ -48,7 +49,8 @@ SKILLS = [
     ("Languages", "Python, TypeScript, JavaScript, SQL, Solidity"),
     ("Frontend", "React, HTML, CSS, Tailwind CSS, Vite"),
     ("Backend and APIs", "Flask, REST APIs, SQLAlchemy, JWT authentication, role-based access control"),
-    ("Data", "PostgreSQL, database design, Supabase Storage, Microsoft Excel, Tableau"),
+    ("Data", "PostgreSQL, database design, Supabase Storage"),
+    ("Data analytics coursework", "Microsoft Excel, SQL, Tableau, data preparation, data visualization"),
     ("Blockchain and research", "Hardhat, Ethereum Sepolia, Merkle trees, Keccak-256, automated testing, gas benchmarking"),
     ("Engineering tools", "Git, GitHub, Turborepo, Docker, Visual Studio Code, ReportLab, terminal/CLI, basic Linux CLI"),
     ("Additional tools", "Adobe Photoshop, Google Docs, Discord"),
@@ -71,8 +73,8 @@ THESIS_BULLETS = [
     "Participated in Solidity prototype development, issuer access control, automated testing, gas measurement, technical documentation, results analysis, and defense preparation.",
     "Helped execute correctness, tamper-evidence, encoding-integrity, access-control, authenticity, and cross-implementation TypeScript/Solidity verification tests.",
     "Participated in a controlled four-arm evaluation covering batch sizes from 1 to 3,000 credentials with three repetitions per measurement cell and live-network confirmation on Ethereum Sepolia.",
-    "Measured a constant 48,730 gas per Merkle batch versus 47,712 gas per credential for the literature baseline; the empirical break-even point was two credentials.",
-    "At 1,000 credentials, measured gas reductions reached 99.9% against the literature baseline and 97.3% against the study's cheapest baseline; all 12 live Sepolia confirmation cells matched local measurements exactly.",
+    "The supplied study reports approximately 48,730 gas per Merkle batch versus 47,712 gas for a single literature-baseline credential write; matched durability-tier comparisons broke even at two credentials.",
+    "At 1,000 credentials, the four-arm study measured 99.9% lower anchoring gas than the literature baseline and 97.3% lower than its log-based baseline; all 12 Sepolia confirmation cells matched local measurements. Results are specific to the study setup.",
     "Deployed and source-verified the BaselineAnchor and MerkleAnchor Solidity contracts on Ethereum Sepolia.",
 ]
 
@@ -83,12 +85,8 @@ SPES_BULLETS = [
     "Performed quality checks on completed IDs and assisted with their organized release and distribution.",
 ]
 
-CERTIFICATIONS = [
-    ("Data Analytics Essentials", "Cisco Networking Academy - Issued August 29, 2026. Practical exposure to Microsoft Excel, SQL, and Tableau."),
-    ("Microsoft Artificial Intelligence Course: Azure AI Fundamentals", "TESDA Online Program - Completed July 13, 2026."),
-    ("Microsoft Cybersecurity Course: Security, Compliance, and Identity Fundamentals", "TESDA Online Program - Completed July 14, 2026."),
-    ("Developing Designs for User Experience", "TESDA Online Program - Completed July 15, 2026."),
-]
+CERTIFICATIONS = P["credentials"]
+
 
 RECOGNITION = [
     "Dean's Lister, Bachelor of Science in Computer Science, President Ramon Magsaysay State University - First Semester, A.Y. 2023-2024.",
@@ -98,10 +96,11 @@ RECOGNITION = [
 ]
 
 
-def set_font(run, size=None, color=INK, bold=None, italic=None):
-    run.font.name = FONT
-    run._element.get_or_add_rPr().rFonts.set(qn("w:ascii"), FONT)
-    run._element.get_or_add_rPr().rFonts.set(qn("w:hAnsi"), FONT)
+def set_font(run, size=None, color=INK, bold=None, italic=None, font_name=None):
+    face = font_name or FONT
+    run.font.name = face
+    run._element.get_or_add_rPr().rFonts.set(qn("w:ascii"), face)
+    run._element.get_or_add_rPr().rFonts.set(qn("w:hAnsi"), face)
     if size is not None:
         run.font.size = Pt(size)
     run.font.color.rgb = color
@@ -127,7 +126,7 @@ def set_cell_margins(cell, top=80, start=120, bottom=80, end=120):
         element.set(qn("w:type"), "dxa")
 
 
-def add_hyperlink(paragraph, text, url, color=LINK, underline=False):
+def add_hyperlink(paragraph, text, url, color=LINK, underline=False, size=9.5, bold=False):
     part = paragraph.part
     relationship_id = part.relate_to(
         url,
@@ -146,8 +145,10 @@ def add_hyperlink(paragraph, text, url, color=LINK, underline=False):
     run_color.set(qn("w:val"), color)
     run_properties.append(run_color)
     run_size = OxmlElement("w:sz")
-    run_size.set(qn("w:val"), "17")
+    run_size.set(qn("w:val"), str(int(size * 2)))
     run_properties.append(run_size)
+    if bold:
+        run_properties.append(OxmlElement("w:b"))
     if underline:
         underline_element = OxmlElement("w:u")
         underline_element.set(qn("w:val"), "single")
@@ -201,12 +202,12 @@ def configure_numbering(document):
     tabs = OxmlElement("w:tabs")
     tab = OxmlElement("w:tab")
     tab.set(qn("w:val"), "num")
-    tab.set(qn("w:pos"), "547")
+    tab.set(qn("w:pos"), "260")
     tabs.append(tab)
     p_pr.append(tabs)
     indent = OxmlElement("w:ind")
-    indent.set(qn("w:left"), "547")
-    indent.set(qn("w:hanging"), "288")
+    indent.set(qn("w:left"), "260")
+    indent.set(qn("w:hanging"), "260")
     p_pr.append(indent)
     spacing = OxmlElement("w:spacing")
     spacing.set(qn("w:after"), "30")
@@ -216,8 +217,8 @@ def configure_numbering(document):
     level.append(p_pr)
     r_pr = OxmlElement("w:rPr")
     fonts = OxmlElement("w:rFonts")
-    fonts.set(qn("w:ascii"), "Arial")
-    fonts.set(qn("w:hAnsi"), "Arial")
+    fonts.set(qn("w:ascii"), FONT)
+    fonts.set(qn("w:hAnsi"), FONT)
     r_pr.append(fonts)
     level.append(r_pr)
     abstract.append(level)
@@ -233,62 +234,59 @@ def configure_numbering(document):
 
 
 def configure_styles(document):
+    from cv_word_design import rule
     styles = document.styles
     normal = styles["Normal"]
     normal.font.name = FONT
-    normal._element.rPr.rFonts.set(qn("w:ascii"), FONT)
-    normal._element.rPr.rFonts.set(qn("w:hAnsi"), FONT)
-    normal.font.size = Pt(9.4)
+    normal.font.size = Pt(10.5)
     normal.font.color.rgb = INK
     normal.paragraph_format.space_before = Pt(0)
-    normal.paragraph_format.space_after = Pt(2)
-    normal.paragraph_format.line_spacing = 1.05
-
-    heading_1 = styles["Heading 1"]
-    heading_1.font.name = FONT
-    heading_1._element.rPr.rFonts.set(qn("w:ascii"), FONT)
-    heading_1._element.rPr.rFonts.set(qn("w:hAnsi"), FONT)
-    heading_1.font.size = Pt(10.5)
-    heading_1.font.bold = True
-    heading_1.font.color.rgb = ACCENT
-    heading_1.paragraph_format.space_before = Pt(8)
-    heading_1.paragraph_format.space_after = Pt(3)
-    heading_1.paragraph_format.keep_with_next = True
-    heading_1.paragraph_format.keep_together = True
-
-    heading_2 = styles["Heading 2"]
-    heading_2.font.name = FONT
-    heading_2._element.rPr.rFonts.set(qn("w:ascii"), FONT)
-    heading_2._element.rPr.rFonts.set(qn("w:hAnsi"), FONT)
-    heading_2.font.size = Pt(10)
-    heading_2.font.bold = True
-    heading_2.font.color.rgb = INK
-    heading_2.paragraph_format.space_before = Pt(3)
-    heading_2.paragraph_format.space_after = Pt(1)
-    heading_2.paragraph_format.keep_with_next = True
-    heading_2.paragraph_format.keep_together = True
-
-    for name, size, color, bold, before, after in (
-        ("CV Contact", 8.5, INK, False, 0, 1),
-        ("CV Meta", 8.6, MUTED, False, 0, 1),
-        ("CV Compact", 8.8, INK, False, 0, 1),
+    normal.paragraph_format.space_after = Pt(3)
+    normal.paragraph_format.line_spacing = Pt(13.5)
+    for style_name, face, size, leading, bold, before, after in (
+        ("Heading 1", "Georgia", 14.5, 18, True, 8, 4),
+        ("Heading 2", FONT, 11.5, 14.5, True, 3, 4),
     ):
-        style = styles.add_style(name, WD_STYLE_TYPE.PARAGRAPH)
-        style.base_style = normal
-        style.font.name = FONT
-        style._element.rPr.rFonts.set(qn("w:ascii"), FONT)
-        style._element.rPr.rFonts.set(qn("w:hAnsi"), FONT)
+        style = styles[style_name]
+        style.font.name = face
+        style._element.get_or_add_rPr().rFonts.set(qn("w:ascii"), face)
+        style._element.get_or_add_rPr().rFonts.set(qn("w:hAnsi"), face)
         style.font.size = Pt(size)
-        style.font.color.rgb = color
         style.font.bold = bold
+        style.font.color.rgb = INK
         style.paragraph_format.space_before = Pt(before)
         style.paragraph_format.space_after = Pt(after)
-        style.paragraph_format.line_spacing = 1.0
+        style.paragraph_format.line_spacing = Pt(leading)
+        style.paragraph_format.keep_with_next = True
+        style.paragraph_format.keep_together = True
+    for style_name, face, size, leading, bold, after in (
+        ("CV Kicker", FONT, 9.5, 12, True, 8),
+        ("CV Name", "Georgia", 32, 38, False, 8),
+        ("CV Contact", FONT, 9.5, 12.5, False, 2),
+        ("CV Meta", FONT, 9.5, 12, False, 2),
+        ("CV Compact", FONT, 10.5, 13.5, False, 3),
+        ("CV Skill", FONT, 10, 12.5, False, 0),
+        ("CV Certificate", FONT, 10.5, 13.5, False, 0),
+    ):
+        style = styles.add_style(style_name, WD_STYLE_TYPE.PARAGRAPH)
+        style.base_style = normal
+        style.font.name = face
+        style._element.get_or_add_rPr().rFonts.set(qn("w:ascii"), face)
+        style._element.get_or_add_rPr().rFonts.set(qn("w:hAnsi"), face)
+        style.font.size = Pt(size)
+        style.font.bold = bold
+        style.font.color.rgb = INK
+        style.paragraph_format.space_before = Pt(0)
+        style.paragraph_format.space_after = Pt(after)
+        style.paragraph_format.line_spacing = Pt(leading)
+    styles["CV Meta"].paragraph_format.keep_with_next = True
 
 
 def add_section_heading(document, title):
     paragraph = document.add_paragraph(style="Heading 1")
-    paragraph.add_run(title.upper())
+    paragraph.add_run(title)
+    from cv_word_design import rule
+    rule(paragraph, space=3)
     return paragraph
 
 
@@ -304,8 +302,8 @@ def add_meta(document, text):
 
 def add_bullet(document, text, num_id):
     paragraph = document.add_paragraph()
-    paragraph.paragraph_format.space_after = Pt(1.5)
-    paragraph.paragraph_format.line_spacing = 1.03
+    paragraph.paragraph_format.space_after = Pt(3)
+    paragraph.paragraph_format.line_spacing = Pt(13.5)
     p_pr = paragraph._p.get_or_add_pPr()
     num_pr = OxmlElement("w:numPr")
     ilvl = OxmlElement("w:ilvl")
@@ -331,12 +329,12 @@ def configure_document(document):
     section = document.sections[0]
     section.page_width = Cm(21)
     section.page_height = Cm(29.7)
-    section.top_margin = Inches(0.65)
-    section.bottom_margin = Inches(0.68)
-    section.left_margin = Inches(0.68)
-    section.right_margin = Inches(0.68)
-    section.header_distance = Inches(0.3)
-    section.footer_distance = Inches(0.3)
+    section.top_margin = Pt(58)
+    section.bottom_margin = Pt(48)
+    section.left_margin = Pt(48)
+    section.right_margin = Pt(48)
+    section.header_distance = Pt(24)
+    section.footer_distance = Pt(22)
     section.different_first_page_header_footer = True
 
     header = section.header
@@ -344,15 +342,29 @@ def configure_document(document):
     paragraph.alignment = WD_ALIGN_PARAGRAPH.LEFT
     paragraph.paragraph_format.space_after = Pt(0)
     run = paragraph.add_run("PAUL JOHN E. ANTIGO  |  CURRICULUM VITAE")
-    set_font(run, size=8, color=MUTED, bold=True)
+    set_font(run, size=9, color=INK, bold=True)
+    from cv_word_design import rule
+    rule(paragraph, space=5)
 
-    footer = section.footer
-    paragraph = footer.paragraphs[0]
-    paragraph.alignment = WD_ALIGN_PARAGRAPH.RIGHT
-    paragraph.paragraph_format.space_after = Pt(0)
-    prefix = paragraph.add_run("Page ")
-    set_font(prefix, size=8, color=MUTED)
-    add_page_field(paragraph)
+    from docx.enum.text import WD_TAB_ALIGNMENT
+    for footer in (section.footer, section.first_page_footer):
+        paragraph = footer.paragraphs[0]
+        paragraph.alignment = WD_ALIGN_PARAGRAPH.LEFT
+        paragraph.paragraph_format.space_before = Pt(0)
+        paragraph.paragraph_format.space_after = Pt(0)
+        paragraph.paragraph_format.tab_stops.add_tab_stop(section.page_width - section.left_margin - section.right_margin, WD_TAB_ALIGNMENT.RIGHT)
+        set_font(paragraph.add_run("CURRICULUM VITAE\tPage "), size=8.5)
+        add_page_field(paragraph)
+        set_font(paragraph.add_run(" / "), size=8.5)
+        run = paragraph.add_run()
+        begin = OxmlElement("w:fldChar")
+        begin.set(qn("w:fldCharType"), "begin")
+        instruction = OxmlElement("w:instrText")
+        instruction.text = " NUMPAGES "
+        end = OxmlElement("w:fldChar")
+        end.set(qn("w:fldCharType"), "end")
+        run._r.extend((begin, instruction, end))
+        set_font(run, size=8.5)
 
 
 def build_cv():
@@ -367,13 +379,17 @@ def build_cv():
     properties.subject = "Comprehensive curriculum vitae for software engineering, OJT, and academic opportunities"
     properties.keywords = "software engineer, full-stack developer, computer science, React, TypeScript, Python, Flask, PostgreSQL, Solidity"
 
-    name = document.add_paragraph()
-    name.paragraph_format.space_after = Pt(0)
-    run = name.add_run("PAUL JOHN E. ANTIGO")
-    set_font(run, size=22, color=INK, bold=True)
+    document.add_paragraph("CURRICULUM VITAE", style="CV Kicker")
+    name = document.add_paragraph(style="CV Name")
+    run = name.add_run(P["name"])
+    set_font(run, size=32, bold=False, font_name="Georgia")
+    from cv_word_design import rule, skills as word_skills, certificates as word_certificates
+    rule(name, edge="left", color="000000", size=18, space=8)
 
     contact = document.add_paragraph(style="CV Contact")
-    contact.add_run("Masinloc, Zambales, Philippines | 0951 137 8115 | ")
+    contact.add_run(f'{P["location"]} | ')
+    add_hyperlink(contact, P["phone"], P["phoneHref"])
+    contact.add_run(" | ")
     add_hyperlink(contact, "Pauljohn.antigo@gmail.com", "mailto:Pauljohn.antigo@gmail.com")
 
     links = document.add_paragraph(style="CV Contact")
@@ -382,13 +398,14 @@ def build_cv():
     add_hyperlink(links, "LinkedIn", "https://www.linkedin.com/in/paul-john-antigo-708047364/")
     links.add_run(" | ")
     add_hyperlink(links, "GitHub", "https://github.com/itszoriel")
+    rule(links, space=6)
+    links.paragraph_format.space_after = Pt(9)
 
     add_section_heading(document, "Professional Profile")
     document.add_paragraph(PROFILE)
 
     add_section_heading(document, "Technical Competencies")
-    for label, text in SKILLS:
-        add_labeled_paragraph(document, label, text, style="CV Compact")
+    word_skills(document, SKILLS, set_font)
 
     add_section_heading(document, "Project Experience")
     add_entry_heading(document, "MunLink | Developer and Maintainer")
@@ -399,6 +416,7 @@ def build_cv():
     for item in MUNLINK_BULLETS:
         add_bullet(document, item, num_id)
 
+    document.add_page_break()
     add_section_heading(document, "Research Experience")
     add_entry_heading(document, "Merkle Root Framework for Micro-Credential Verification Authenticity and Gas-Efficient Issuance")
     add_meta(document, "Undergraduate Thesis, President Ramon Magsaysay State University | Researcher / Developer, four-member team | Final defense pending")
@@ -431,25 +449,13 @@ def build_cv():
 
     add_section_heading(document, "Education")
     add_entry_heading(document, "Bachelor of Science in Computer Science")
-    add_meta(document, "President Ramon Magsaysay State University, Iba Campus | Expected July 2027 | Fourth-year student")
+    add_meta(document, f'{P["education"]["institution"]}, {P["education"]["campus"]} | 2023-2027 | Expected {P["education"]["expectedGraduation"]} | {P["education"]["status"]}')
     add_entry_heading(document, "Senior High School - General Academic Strand")
     add_meta(document, "Northern Zambales College, Inc., Inhobol, Masinloc, Zambales | Completed S.Y. 2022-2023")
 
-    add_section_heading(document, "Certifications and Training")
-    for index, (title, detail) in enumerate(CERTIFICATIONS):
-        paragraph = add_bullet(document, "", num_id)
-        paragraph.runs[0].clear()
-        title_run = paragraph.add_run(f"{title} - ")
-        set_font(title_run, bold=True)
-        detail_run = paragraph.add_run(detail)
-        set_font(detail_run)
-        if index == 0:
-            paragraph.add_run(" ")
-            add_hyperlink(
-                paragraph,
-                "Credential verification",
-                "https://www.credly.com/badges/9f98bddd-f5d7-4246-9c03-25fe7a72c35e/public_url",
-            )
+    document.add_page_break()
+    add_section_heading(document, "Earned Course Certificates")
+    word_certificates(document, CERTIFICATIONS, add_hyperlink, set_font)
 
     add_section_heading(document, "Academic Recognition")
     for item in RECOGNITION:
@@ -479,8 +485,7 @@ def build_cv():
 
     add_section_heading(document, "Continuing Professional Development")
     for item in (
-        "AWS Certified AI Practitioner exam preparation - self-directed study in progress.",
-        "Planned certification path: AWS Certified Generative AI Developer - Professional, followed by AWS Certified DevOps Engineer - Professional. Neither credential has been earned yet.",
+        "Studies cloud and generative AI fundamentals through self-directed learning.",
         "Continues MunLink development and creates mini-projects to apply unfamiliar technologies and concepts.",
     ):
         add_bullet(document, item, num_id)
@@ -491,105 +496,29 @@ def build_cv():
     add_labeled_paragraph(document, "Work arrangements", "Open to remote, hybrid, or onsite opportunities")
 
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    for style in document.styles:
+        if hasattr(style, "font"):
+            style.font.color.rgb = RGBColor(0, 0, 0)
+    for style_name in ("Hyperlink", "FollowedHyperlink"):
+        style = document.styles[style_name] if style_name in document.styles else document.styles.add_style(style_name, WD_STYLE_TYPE.CHARACTER)
+        style.font.color.rgb = RGBColor(0, 0, 0)
+    for element in document.element.iter(qn("w:color")):
+        element.set(qn("w:val"), "000000")
+        for key in ("themeColor", "themeTint", "themeShade"):
+            element.attrib.pop(qn(f"w:{key}"), None)
     document.save(OUTPUT_PATH)
+    blacken_docx(OUTPUT_PATH)
     print(f"Generated {OUTPUT_PATH}")
 
 
 def make_pdf_styles():
-    sample = getSampleStyleSheet()
-    return {
-        "name": ParagraphStyle(
-            "CVName",
-            parent=sample["Normal"],
-            fontName="Helvetica-Bold",
-            fontSize=22,
-            leading=23,
-            textColor=colors.HexColor("#172126"),
-            spaceAfter=0,
-        ),
-        "contact": ParagraphStyle(
-            "CVContact",
-            parent=sample["Normal"],
-            fontName="Helvetica",
-            fontSize=8.5,
-            leading=10,
-            textColor=colors.HexColor("#172126"),
-            spaceAfter=1,
-        ),
-        "section": ParagraphStyle(
-            "CVSection",
-            parent=sample["Normal"],
-            fontName="Helvetica-Bold",
-            fontSize=10.5,
-            leading=12,
-            textColor=colors.HexColor("#1D5C63"),
-            spaceBefore=7,
-            spaceAfter=3,
-            keepWithNext=True,
-        ),
-        "entry": ParagraphStyle(
-            "CVEntry",
-            parent=sample["Normal"],
-            fontName="Helvetica-Bold",
-            fontSize=10,
-            leading=11.5,
-            textColor=colors.HexColor("#172126"),
-            spaceBefore=2,
-            spaceAfter=1,
-            keepWithNext=True,
-        ),
-        "body": ParagraphStyle(
-            "CVBody",
-            parent=sample["Normal"],
-            fontName="Helvetica",
-            fontSize=9.2,
-            leading=10.9,
-            textColor=colors.HexColor("#172126"),
-            spaceAfter=2,
-        ),
-        "compact": ParagraphStyle(
-            "CVCompact",
-            parent=sample["Normal"],
-            fontName="Helvetica",
-            fontSize=8.8,
-            leading=10.2,
-            textColor=colors.HexColor("#172126"),
-            spaceAfter=1,
-        ),
-        "meta": ParagraphStyle(
-            "CVMeta",
-            parent=sample["Normal"],
-            fontName="Helvetica",
-            fontSize=8.4,
-            leading=9.7,
-            textColor=colors.HexColor("#52616A"),
-            spaceAfter=1,
-            keepWithNext=True,
-        ),
-        "bullet": ParagraphStyle(
-            "CVBullet",
-            parent=sample["Normal"],
-            fontName="Helvetica",
-            fontSize=8.8,
-            leading=10.4,
-            leftIndent=13,
-            firstLineIndent=-8,
-            textColor=colors.HexColor("#172126"),
-            spaceAfter=1.4,
-        ),
-        "footer": ParagraphStyle(
-            "CVFooter",
-            parent=sample["Normal"],
-            fontName="Helvetica",
-            fontSize=7.8,
-            leading=9,
-            textColor=colors.HexColor("#52616A"),
-        ),
-    }
+    from cv_design import make_styles
+    return make_styles()
 
 
 def pdf_section(story, styles, title):
-    story.append(Paragraph(escape(title.upper()), styles["section"]))
+    from cv_design import SectionHeading
+    story.append(SectionHeading(title, styles["section"]))
 
 
 def pdf_entry(story, styles, title, meta_lines=()):
@@ -599,7 +528,7 @@ def pdf_entry(story, styles, title, meta_lines=()):
 
 
 def pdf_bullet(story, styles, text):
-    story.append(Paragraph(f"- {escape(text)}", styles["bullet"]))
+    story.append(Paragraph(escape(plain(text)), styles["bullet"], bulletText="•"))
 
 
 def pdf_labeled(story, styles, label, text, style="compact"):
@@ -607,45 +536,22 @@ def pdf_labeled(story, styles, label, text, style="compact"):
 
 
 def pdf_page(canvas, document):
-    canvas.saveState()
-    width, height = A4
-    if document.page > 1:
-        canvas.setFont("Helvetica-Bold", 7.8)
-        canvas.setFillColor(colors.HexColor("#52616A"))
-        canvas.drawString(document.leftMargin, height - 0.35 * inch, "PAUL JOHN E. ANTIGO  |  CURRICULUM VITAE")
-    canvas.setFont("Helvetica", 7.8)
-    canvas.setFillColor(colors.HexColor("#52616A"))
-    canvas.drawRightString(width - document.rightMargin, 0.32 * inch, f"Page {document.page}")
-    canvas.restoreState()
+    from cv_design import page_furniture
+    page_furniture(canvas, document)
 
 
 def build_pdf():
+    from cv_design import register_fonts, Masthead, skill_grid, certificate_grid, make_document
+    register_fonts()
     styles = make_pdf_styles()
-    story = []
-
-    story.append(Paragraph("PAUL JOHN E. ANTIGO", styles["name"]))
-    story.append(
-        Paragraph(
-            "Masinloc, Zambales, Philippines | 0951 137 8115 | "
-            '<link href="mailto:Pauljohn.antigo@gmail.com" color="#164E63">Pauljohn.antigo@gmail.com</link>',
-            styles["contact"],
-        )
-    )
-    story.append(
-        Paragraph(
-            '<link href="https://paul-antigo.vercel.app/" color="#164E63">Portfolio</link> | '
-            '<link href="https://www.linkedin.com/in/paul-john-antigo-708047364/" color="#164E63">LinkedIn</link> | '
-            '<link href="https://github.com/itszoriel" color="#164E63">GitHub</link>',
-            styles["contact"],
-        )
-    )
+    document = make_document(PDF_OUTPUT_PATH)
+    story = [Masthead(styles), Spacer(1, 8)]
 
     pdf_section(story, styles, "Professional Profile")
     story.append(Paragraph(escape(PROFILE), styles["body"]))
 
     pdf_section(story, styles, "Technical Competencies")
-    for label, text in SKILLS:
-        pdf_labeled(story, styles, label, text)
+    story.append(skill_grid(SKILLS, styles, document.width))
 
     pdf_section(story, styles, "Project Experience")
     pdf_entry(
@@ -659,13 +565,14 @@ def build_pdf():
     )
     story.append(
         Paragraph(
-            '<link href="https://munlink-web-9s3r.onrender.com/" color="#164E63">Live demo</link>',
+            '<link href="https://munlink-web-9s3r.onrender.com/" color="#000000">Live demo</link>',
             styles["meta"],
         )
     )
     for item in MUNLINK_BULLETS:
         pdf_bullet(story, styles, item)
 
+    story.append(PageBreak())
     pdf_section(story, styles, "Research Experience")
     pdf_entry(
         story,
@@ -681,8 +588,8 @@ def build_pdf():
     story.append(
         Paragraph(
             '<b>Verified contracts:</b> '
-            '<link href="https://sepolia.etherscan.io/address/0xE569641E67C10f9a127fb3c01686D06DbA90dEEA#code" color="#164E63">BaselineAnchor 0xE569...dEEA</link> | '
-            '<link href="https://sepolia.etherscan.io/address/0x2f5D48A9AC370e3cA81301107f1828E21500deF8#code" color="#164E63">MerkleAnchor 0x2f5D...deF8</link>',
+            '<link href="https://sepolia.etherscan.io/address/0xE569641E67C10f9a127fb3c01686D06DbA90dEEA#code" color="#000000">BaselineAnchor 0xE569...dEEA</link> | '
+            '<link href="https://sepolia.etherscan.io/address/0x2f5D48A9AC370e3cA81301107f1828E21500deF8#code" color="#000000">MerkleAnchor 0x2f5D...deF8</link>',
             styles["meta"],
         )
     )
@@ -704,7 +611,7 @@ def build_pdf():
         story,
         styles,
         "Bachelor of Science in Computer Science",
-        ("President Ramon Magsaysay State University, Iba Campus | Expected July 2027 | Fourth-year student",),
+        (f'{P["education"]["institution"]}, {P["education"]["campus"]} | 2023-2027 | Expected {P["education"]["expectedGraduation"]} | {P["education"]["status"]}',),
     )
     pdf_entry(
         story,
@@ -713,12 +620,9 @@ def build_pdf():
         ("Northern Zambales College, Inc., Inhobol, Masinloc, Zambales | Completed S.Y. 2022-2023",),
     )
 
-    pdf_section(story, styles, "Certifications and Training")
-    for index, (title, detail) in enumerate(CERTIFICATIONS):
-        link = ""
-        if index == 0:
-            link = ' <link href="https://www.credly.com/badges/9f98bddd-f5d7-4246-9c03-25fe7a72c35e/public_url" color="#164E63">Credential verification</link>'
-        story.append(Paragraph(f"- <b>{escape(title)}</b> - {escape(detail)}{link}", styles["bullet"]))
+    story.append(PageBreak())
+    pdf_section(story, styles, "Earned Course Certificates")
+    story.append(certificate_grid(CERTIFICATIONS, styles, document.width))
 
     pdf_section(story, styles, "Academic Recognition")
     for item in RECOGNITION:
@@ -732,8 +636,7 @@ def build_pdf():
 
     pdf_section(story, styles, "Continuing Professional Development")
     for item in (
-        "AWS Certified AI Practitioner exam preparation - self-directed study in progress.",
-        "Planned certification path: AWS Certified Generative AI Developer - Professional, followed by AWS Certified DevOps Engineer - Professional. Neither credential has been earned yet.",
+        "Studies cloud and generative AI fundamentals through self-directed learning.",
         "Continues MunLink development and creates mini-projects to apply unfamiliar technologies and concepts.",
     ):
         pdf_bullet(story, styles, item)
@@ -744,18 +647,10 @@ def build_pdf():
     pdf_labeled(story, styles, "Work arrangements", "Open to remote, hybrid, or onsite opportunities", "body")
 
     PDF_OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-    document = SimpleDocTemplate(
-        str(PDF_OUTPUT_PATH),
-        pagesize=A4,
-        rightMargin=0.68 * inch,
-        leftMargin=0.68 * inch,
-        topMargin=0.58 * inch,
-        bottomMargin=0.9 * inch,
-        title="Paul John E. Antigo - Curriculum Vitae",
-        author="Paul John E. Antigo",
-        subject="Comprehensive curriculum vitae for software engineering, OJT, and academic opportunities",
-    )
-    document.build(story, onFirstPage=pdf_page, onLaterPages=pdf_page)
+    document.build(story)
+    from pypdf import PdfReader
+    assert len(PdfReader(PDF_OUTPUT_PATH).pages) == 3, "CV layout must retain three balanced pages"
+    assert_black_pdf(PDF_OUTPUT_PATH)
     print(f"Generated {PDF_OUTPUT_PATH}")
 
 

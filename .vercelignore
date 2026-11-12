@@ -1,0 +1,10 @@
+# Build inputs are src/, public/, and the project configuration.
+resume/
+tmp/
+output/
+.cp-images/
+.playwright*/
+node_modules/
+dist/
+.env
+.env.*

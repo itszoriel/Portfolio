@@ -1,6 +1,6 @@
 import { ArrowDownRight, ArrowRight, ArrowUpRight, Check, MapPin } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import { credentials, emailAddress, exploring, homeDescription, homeTitle, personName, projectUrl, skillGroups, socialLinks } from '../content'
+import { credentials, emailAddress, exploring, homeDescription, homeTitle, personName, phoneNumber, profile, projectUrl, skillGroups, socialLinks } from '../content'
 import { Footer } from '../components/Footer'
 import { PageMetadata } from '../components/PageMetadata'
 import { Reveal } from '../components/Reveal'
@@ -19,7 +19,7 @@ const munlinkFeatures = [
   'Audited sensitive-file access',
 ]
 
-const projectStack = ['React', 'TypeScript', 'Vite', 'Tailwind CSS', 'Python', 'Flask', 'SQLAlchemy', 'PostgreSQL', 'JWT', 'Turborepo']
+const projectStack = profile.project.stack
 
 export function HomePage() {
   return (
@@ -71,45 +71,33 @@ export function HomePage() {
           </Reveal>
         </section>
 
-        <section className="section project-section" id="projects">
-          <Reveal><SectionHeading number="01" title="Selected Work" description="A collection of work and experiences that reflect my curiosity, learning, and growth." /></Reveal>
-          <Reveal className="project-heading-row">
-            <div>
-              <span className="eyebrow">Academic origin / Personal project</span>
-              <h3>MunLink</h3>
-            </div>
-            <span className="project-year">ACTIVE PERSONAL PROJECT</span>
-          </Reveal>
-
-          <div className="project-detail-grid">
-            <Reveal className="project-story">
-              <p className="project-lede">An independent civic-technology project exploring how common municipal services could be brought together in a digital platform.</p>
-              <p>MunLink began as a three-person CSE 2 project during my third year. I took responsibility for development while my teammates supported testing and debugging. After the course, I continued maintaining and expanding it as a personal project.</p>
-              <div className="project-actions">
-                <a className="button primary-button" href={projectUrl} target="_blank" rel="noreferrer">Open demo <ArrowUpRight size={17} /></a>
-                <Link className="button text-button" to="/work/munlink">Case study <ArrowRight size={17} /></Link>
-              </div>
-            </Reveal>
-            <Reveal className="feature-list">
-              {munlinkFeatures.map((feature) => <div key={feature}><Check size={14} /><span>{feature}</span></div>)}
-            </Reveal>
+        <section className="section credentials-section" id="credentials" aria-label="Earned credentials">
+          <SectionHeading number="01" title="Earned credentials" description="Completed courses in data, AI, cybersecurity, and user experience." />
+          <div className="credential-list">
+            {credentials.map((credential) => (
+              <article className="credential-card" key={credential.title}>
+                <div className="credential-main">
+                  <span className="credential-type">{credential.type}</span>
+                  <h3>{credential.title}</h3>
+                  {credential.kicker && <p className="credential-course">{credential.kicker}</p>}
+                  <p className="credential-issuer">{credential.issuer}</p>
+                </div>
+                <div className="credential-meta">
+                  <span>Completed <time dateTime={credential.completed}>{credential.date}</time></span>
+                  <a className="credential-link" href={credential.credentialUrl} target="_blank" rel="noreferrer" aria-label={`View ${credential.title} certificate (PDF)`}>
+                    View certificate <ArrowUpRight size={15} aria-hidden="true" />
+                  </a>
+                </div>
+              </article>
+            ))}
           </div>
-
-          <Reveal className="stack-row">
-            <span>BUILT WITH</span>
-            <div>{projectStack.map((technology) => <code key={technology}>{technology}</code>)}</div>
-          </Reveal>
-
-          <Reveal className="disclaimer">
-            <span>Project context</span>
-            <p>The current demo is scoped to Zambales, with Region 3 location data retained only for possible future expansion. MunLink is an independent learning project, not an official government service or an LGU deployment.</p>
-          </Reveal>
+          <p className="credential-note">These are earned course-completion certificates. TESDA Microsoft courses do not confer Microsoft professional certification.</p>
         </section>
 
         <section className="section experience-section" id="experience">
           <Reveal><SectionHeading number="02" title="Experience" description="Early workplace experience in technical support and careful data handling." /></Reveal>
           <Reveal className="experience-item">
-            <div className="experience-date"><span>JUNE 4-JULY 31, 2025<br />20 DAYS</span><b>SPES</b></div>
+            <div className="experience-date"><span>{profile.experience.dates}<br />{profile.experience.duration}</span><b>SPES</b></div>
             <div className="experience-content">
               <span className="eyebrow">Special Program for Employment of Students (DOLE)</span>
               <h3>IT Support Assistant <span>— Cisco Department</span></h3>
@@ -150,30 +138,39 @@ export function HomePage() {
           </Reveal>
         </section>
 
-        <section className="section credentials-section" id="credentials">
-          <Reveal><SectionHeading number="04" title="Credentials & Learning" description="Foundational coursework that broadens my engineering perspective." /></Reveal>
-          <div className="credential-list">
-            {credentials.map((credential, index) => (
-              <Reveal className={`credential-card ${index === 0 ? 'featured' : ''}`} key={credential.title}>
-                <div className="credential-number">0{index + 1}</div>
-                <div className="credential-main">
-                  {'kicker' in credential && credential.kicker && <span className="eyebrow">{credential.kicker}</span>}
-                  <h3>{credential.title}</h3>
-                  <p>{credential.issuer}</p>
-                  {'description' in credential && credential.description && <p className="credential-description">{credential.description}</p>}
-                  {'topics' in credential && credential.topics && <div className="credential-topics">{credential.topics.map((topic) => <code key={topic}>{topic}</code>)}</div>}
-                </div>
-                <div className="credential-meta">
-                  <span>{credential.date}</span>
-                  <span>{credential.type}</span>
-                  <a className="credential-link" href={credential.credentialUrl} target="_blank" rel="noreferrer">
-                    View credential <ArrowUpRight size={13} aria-hidden="true" />
-                  </a>
-                </div>
-              </Reveal>
-            ))}
+        <section className="section project-section" id="projects">
+          <Reveal><SectionHeading number="04" title="Selected Work" description="A collection of work and experiences that reflect my curiosity, learning, and growth." /></Reveal>
+          <Reveal className="project-heading-row">
+            <div>
+              <span className="eyebrow">Academic origin / Personal project</span>
+              <h3>MunLink</h3>
+            </div>
+            <span className="project-year">ACTIVE PERSONAL PROJECT</span>
+          </Reveal>
+
+          <div className="project-detail-grid">
+            <Reveal className="project-story">
+              <p className="project-lede">An independent civic-technology project exploring how common municipal services could be brought together in a digital platform.</p>
+              <p>MunLink began as a three-person CSE 2 project during my third year. I handled development while my teammates supported testing and debugging. After the course, I continued maintaining and expanding it as a personal project, using AI assistance, documentation, and developer communities for implementation and validation.</p>
+              <div className="project-actions">
+                <a className="button primary-button" href={projectUrl} target="_blank" rel="noreferrer">Open demo <ArrowUpRight size={17} /></a>
+                <Link className="button text-button" to="/work/munlink">Case study <ArrowRight size={17} /></Link>
+              </div>
+            </Reveal>
+            <Reveal className="feature-list">
+              {munlinkFeatures.map((feature) => <div key={feature}><Check size={14} /><span>{feature}</span></div>)}
+            </Reveal>
           </div>
-          <Reveal className="credential-note"><span>Note</span><p>The TESDA Microsoft courses listed here are course completion certificates, not Microsoft professional certifications.</p></Reveal>
+
+          <Reveal className="stack-row">
+            <span>BUILT WITH</span>
+            <div>{projectStack.map((technology) => <code key={technology}>{technology}</code>)}</div>
+          </Reveal>
+
+          <Reveal className="disclaimer">
+            <span>Project context</span>
+            <p>The current demo is scoped to Zambales, with Region 3 location data retained only for possible future expansion. MunLink is an independent learning project, not an official government service or an LGU deployment.</p>
+          </Reveal>
         </section>
 
         <section className="section about-section" id="about">
@@ -181,19 +178,20 @@ export function HomePage() {
           <div className="about-layout">
             <Reveal className="about-lede"><p>I like figuring things out, trying ideas, and learning from the process of making them work.</p></Reveal>
             <Reveal className="about-copy">
-              <p>I&apos;m Paul John E. Antigo.</p>
+              <p>I&apos;m {personName}, a {profile.education.status.toLowerCase()} at {profile.education.institution}, {profile.education.campus}. I expect to graduate in {profile.education.expectedGraduation}.</p>
+              <p>My undergraduate research explores Merkle-root micro-credential verification using Solidity, TypeScript, and Ethereum Sepolia. I contribute as a researcher and developer in a four-member team; final defense is pending.</p>
               <p>I learn best through hands-on experience. Projects, coursework, and real-world opportunities have allowed me to explore different areas of technology—from software and databases to data, user experience, security, and emerging technologies.</p>
               <p>I’m still early in my journey, so I try to stay open-minded about where my interests may lead. What matters most to me right now is building strong fundamentals, learning from experience, and becoming more confident in solving unfamiliar problems.</p>
               <p>I don’t expect to have everything figured out yet. I’m simply focused on staying curious, improving over time, and finding opportunities where I can contribute while continuing to learn.</p>
             </Reveal>
           </div>
-          <Reveal className="now-panel">
+          <Reveal className="now-panel" id="current-learning">
             <div><span className="live-dot" /><h3>Right now</h3></div>
             <ul>
               <li>Completing my BS Computer Science degree at PRMSU</li>
               <li>Strengthening my technical and problem-solving fundamentals</li>
-              <li>Studying for AWS Certified AI Practitioner</li>
-              <li>Planning to pursue AWS Certified Generative AI Developer - Professional next, followed by AWS Certified DevOps Engineer - Professional</li>
+              <li>{profile.learning.current}</li>
+              <li>{profile.learning.planned}</li>
               <li>Developing personal projects and strengthening my skills through hands-on implementation and testing</li>
               <li>Exploring software, data analytics, cybersecurity, AI, and UX</li>
               <li>Looking for opportunities to learn, contribute, and gain real-world experience</li>
@@ -208,6 +206,7 @@ export function HomePage() {
             <Reveal><p>I’m open to internships, entry-level opportunities, collaborations, and projects where I can contribute, learn from experienced developers, and continue growing as a software engineer.</p></Reveal>
             <Reveal className="contact-links">
               <SocialLink label={emailAddress} href={socialLinks.email} />
+              <SocialLink label={phoneNumber} href={socialLinks.phone} />
               <SocialLink label="LinkedIn" href={socialLinks.linkedin} />
               <SocialLink label="GitHub" href={socialLinks.github} />
               <SocialLink label="Instagram" href={socialLinks.instagram} />

@@ -1,43 +1,36 @@
-export const siteUrl = 'https://paul-antigo.vercel.app/'
-export const personName = 'Paul John E. Antigo'
+import profile from './data/profile.json'
+
+export { profile }
+export const siteUrl = profile.portfolio
+export const personName = profile.name
 export const homeTitle = `${personName} | Computer Science Student & Portfolio`
 export const homeDescription = `Portfolio of ${personName}, a Computer Science student exploring software development, cybersecurity, data, cloud, and AI.`
 
-export const projectUrl = 'https://munlink-web-9s3r.onrender.com/'
-export const resumeUrl = '/Paul-John-Antigo-Resume.pdf'
+export const projectUrl = profile.project.demo
+export const resumeUrl = '/resumes/Paul-John-Antigo-ATS-Resume.pdf'
 export const phResumeUrl = '/resumes/Paul-John-Antigo-PH-Resume.pdf'
 export const cvUrl = '/resumes/Paul-John-Antigo-CV.pdf'
-export const emailAddress = 'Pauljohn.antigo@gmail.com'
+export const emailAddress = profile.email
+export const phoneNumber = profile.phone
 
 export const socialLinks = {
   email: `mailto:${emailAddress}`,
-  github: 'https://github.com/itszoriel',
-  linkedin: 'https://www.linkedin.com/in/paul-john-antigo-708047364/',
-  instagram: 'https://www.instagram.com/ptnagooo/',
+  phone: profile.phoneHref,
+  github: profile.github,
+  linkedin: profile.linkedin,
+  instagram: profile.instagram,
 } as const
 
 export const navigation = [
-  { number: '01', label: 'Projects', href: '/#projects' },
+  { number: '01', label: 'Credentials', href: '/#credentials' },
   { number: '02', label: 'Experience', href: '/#experience' },
   { number: '03', label: 'Skills', href: '/#skills' },
-  { number: '04', label: 'Credentials', href: '/#credentials' },
+  { number: '04', label: 'Projects', href: '/#projects' },
   { number: '05', label: 'About', href: '/#about' },
   { number: '06', label: 'Contact', href: '/#contact' },
 ]
 
-export const skillGroups = [
-  { title: 'Frontend', items: ['React', 'TypeScript', 'JavaScript', 'HTML', 'CSS', 'Tailwind CSS', 'Vite'] },
-  { title: 'Backend', items: ['Python', 'Flask', 'REST APIs', 'SQLAlchemy'] },
-  { title: 'Database', items: ['PostgreSQL', 'SQL', 'Database Design'] },
-  {
-    title: 'Development / Engineering',
-    items: ['Git', 'GitHub', 'Turborepo', 'Authentication', 'Authorization', 'JWT', 'Role-Based Access Control', 'API Integration'],
-  },
-  {
-    title: 'Development workflows',
-    items: ['Detailed prompting', 'Task decomposition', 'Context management', 'Output validation', 'Token-conscious workflows'],
-  },
-]
+export const skillGroups = profile.skillGroups
 
 export const exploring = [
   'Data Analytics',
@@ -46,37 +39,4 @@ export const exploring = [
   'Artificial Intelligence Fundamentals',
 ]
 
-export const credentials = [
-  {
-    title: 'Data Analytics Essentials',
-    issuer: 'Cisco Networking Academy',
-    date: 'August 29, 2026',
-    type: 'Certificate of Course Completion',
-    credentialUrl: '/credentials/data-analytics-essentials.pdf',
-    description: 'Foundational training in the data analytics process, data preparation, analysis, and communicating insights.',
-    topics: ['Excel', 'SQL', 'Tableau', 'Data preparation', 'Basic statistical analysis', 'Data visualization'],
-  },
-  {
-    title: 'Azure AI Fundamentals',
-    kicker: 'Microsoft Artificial Intelligence Course',
-    issuer: 'TESDA',
-    date: 'July 13, 2026',
-    type: 'Certificate of Completion',
-    credentialUrl: '/credentials/azure-ai-fundamentals.pdf',
-  },
-  {
-    title: 'Security, Compliance, and Identity Fundamentals',
-    kicker: 'Microsoft Cybersecurity Course',
-    issuer: 'TESDA',
-    date: 'July 14, 2026',
-    type: 'Certificate of Completion',
-    credentialUrl: '/credentials/security-compliance-identity-fundamentals.pdf',
-  },
-  {
-    title: 'Developing Designs for User Experience',
-    issuer: 'TESDA',
-    date: 'July 15, 2026',
-    type: 'Certificate of Completion',
-    credentialUrl: '/credentials/developing-designs-for-user-experience.pdf',
-  },
-] as const
+export const credentials = profile.credentials

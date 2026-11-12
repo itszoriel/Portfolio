@@ -1,0 +1,113 @@
+{
+  "name": "Paul John E. Antigo",
+  "identity": "Computer Science student · Software & technology",
+  "location": "Taltal, Masinloc, Zambales, Philippines",
+  "phone": "09511378115",
+  "phoneHref": "tel:+639511378115",
+  "email": "Pauljohn.antigo@gmail.com",
+  "portfolio": "https://paul-antigo.vercel.app/",
+  "github": "https://github.com/itszoriel",
+  "linkedin": "https://www.linkedin.com/in/paul-john-antigo-708047364/",
+  "instagram": "https://www.instagram.com/ptnagooo/",
+  "education": {
+    "degree": "Bachelor of Science in Computer Science",
+    "institution": "President Ramon Magsaysay State University",
+    "campus": "Iba Campus",
+    "period": "2023–2027",
+    "expectedGraduation": "July 2027",
+    "status": "Fourth-year student",
+    "secondary": "Senior High School - General Academic Strand",
+    "secondaryInstitution": "Northern Zambales College, Inc., Inhobol, Masinloc, Zambales",
+    "secondaryCompletion": "S.Y. 2022-2023"
+  },
+  "experience": {
+    "title": "IT Support Assistant - Cisco Department",
+    "organization": "Northern Zambales College, Inc.",
+    "program": "Special Program for Employment of Students (SPES / DOLE)",
+    "location": "Masinloc, Zambales",
+    "dates": "June 4–July 31, 2025",
+    "duration": "20 days",
+    "bullets": [
+      "Validated student information in Microsoft Excel and the school's information system, preparing checked records for ID production.",
+      "Prepared student photographs in Adobe Photoshop, producing images for official identification cards.",
+      "Inspected completed cards and assisted with organized release, helping distribute student IDs."
+    ]
+  },
+  "project": {
+    "name": "MunLink",
+    "role": "Developer / Maintainer",
+    "status": "Active personal project; originated in CSE 2",
+    "demo": "https://munlink-web-9s3r.onrender.com/",
+    "repository": "https://github.com/itszoriel/Munlink-reg-3",
+    "stack": ["React", "TypeScript", "Vite", "Tailwind CSS", "Python", "Flask", "SQLAlchemy", "PostgreSQL", "JWT", "Turborepo"],
+    "resumeBullets": [
+      "Built resident and administrative React applications with Flask and PostgreSQL, connecting frontend, API, and database workflows.",
+      "Implemented document requests, payments, and QR-verified PDF release, enabling an end-to-end request-to-claim workflow.",
+      "Implemented JWT authentication, role- and location-scoped permissions, and audit logging, providing access controls and traceability.",
+      "Tested workflows and debugged CORS, authentication, and database issues, resolving frontend-to-API integration problems."
+    ]
+  },
+  "credentials": [
+    {
+      "title": "Data Analytics Essentials",
+      "kicker": "",
+      "issuer": "Cisco Networking Academy",
+      "completed": "2026-08-29",
+      "date": "August 29, 2026",
+      "type": "Certificate of Course Completion",
+      "credentialUrl": "/credentials/data-analytics-essentials.pdf",
+      "verificationUrl": "https://www.credly.com/badges/9f98bddd-f5d7-4246-9c03-25fe7a72c35e/public_url",
+      "description": "Coursework in data preparation, analysis, and communicating insights.",
+      "topics": ["Excel", "SQL", "Tableau"]
+    },
+    {
+      "title": "Azure AI Fundamentals",
+      "kicker": "Microsoft Artificial Intelligence Course",
+      "issuer": "TESDA Online Program",
+      "completed": "2026-07-13",
+      "date": "July 13, 2026",
+      "type": "Certificate of Completion",
+      "credentialUrl": "/credentials/azure-ai-fundamentals.pdf",
+      "verificationUrl": "",
+      "description": "",
+      "topics": []
+    },
+    {
+      "title": "Security, Compliance, and Identity Fundamentals",
+      "kicker": "Microsoft Cybersecurity Course",
+      "issuer": "TESDA Online Program",
+      "completed": "2026-07-14",
+      "date": "July 14, 2026",
+      "type": "Certificate of Completion",
+      "credentialUrl": "/credentials/security-compliance-identity-fundamentals.pdf",
+      "verificationUrl": "",
+      "description": "",
+      "topics": []
+    },
+    {
+      "title": "Developing Designs for User Experience",
+      "kicker": "",
+      "issuer": "TESDA Online Program",
+      "completed": "2026-07-15",
+      "date": "July 15, 2026",
+      "type": "Certificate of Completion",
+      "credentialUrl": "/credentials/developing-designs-for-user-experience.pdf",
+      "verificationUrl": "",
+      "description": "",
+      "topics": []
+    }
+  ],
+  "learning": {
+    "current": "AWS Certified AI Practitioner exam preparation - self-directed study in progress; credential not yet earned.",
+    "planned": "Planned next: AWS Certified Generative AI Developer - Professional, then AWS Certified DevOps Engineer - Professional. Neither credential has been earned."
+  },
+  "skillGroups": [
+    {"title": "Frontend", "items": ["React", "TypeScript", "JavaScript", "HTML", "CSS", "Tailwind CSS", "Vite"]},
+    {"title": "Backend", "items": ["Python", "Flask", "REST APIs", "SQLAlchemy", "ReportLab"]},
+    {"title": "Database", "items": ["PostgreSQL", "SQL", "Database design", "Supabase Storage"]},
+    {"title": "Development / Engineering", "items": ["Git", "GitHub", "Turborepo", "Docker", "Authentication", "Authorization", "JWT", "Role-based access control", "API integration"]},
+    {"title": "Research (academic)", "items": ["Solidity", "TypeScript", "Hardhat", "Ethereum Sepolia", "Merkle trees", "Automated testing", "Gas measurement"]},
+    {"title": "Data analytics (coursework)", "items": ["Microsoft Excel", "SQL", "Tableau", "Data preparation", "Data visualization"]},
+    {"title": "Development workflows", "items": ["AI-assisted development", "Detailed prompting", "Task decomposition", "Context management", "Output validation", "Token-conscious workflows"]}
+  ]
+}
